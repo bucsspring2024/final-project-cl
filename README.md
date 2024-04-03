@@ -13,7 +13,7 @@
 
 ## Project Description
 
-<< Give an overview of your project >>
+I want to make a Enter the Gungeon style game where the character you pick are from Valorant. Depending on which character you pick you get different ability from the original game.
 
 ***    
 
@@ -31,11 +31,11 @@
 
 ### Features
 
-1. << Feature 1 >>
-2. << Feature 2 >>
-3. << Feature 3 >>
-4. << Feature 4 >>
-5. << Feature 5 >>
+1. Agent Selection - where you pick the agent (Jett)
+2. Moveable Character - The agent(Jett) can be controlled to move left right and at an angle
+3. Shoot - You would be able to shoot a gun at the direction you click
+4. Scolling Background - you are able to move between screens
+5. Game Over Screen - when you die, the game ends with a screen
 
 ### Classes
 
