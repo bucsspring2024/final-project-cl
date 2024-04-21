@@ -9,19 +9,37 @@ class Jett:
         self.height = 24
         self.x = 400
         self.y = 500
-        self.images = {
-            'front' : pygame.image.load("assets/JettFront.png"),
-            'back' : pygame.image.load("assets/JettBack.png"),
-            'left' : pygame.image.load("assets/JettLeft.png"),
-            'right' : pygame.image.load("assets/JettRight.png"),
-            'back right' : pygame.image.load("assets/JettBackRight.png"),
-            'back left' : pygame.image.load("assets/JettBackLeft.png")
+        self.image_paths = {
+            'front' : ["assets/jettStanding/JettFront.png", "assets/jettWalking/front/JettFrontWalking1.png", "assets/jettWalking/front/JettFrontWalking2.png", "assets/jettWalking/front/JettFrontWalking3.png"],
+            'back' : ["assets/jettStanding/JettBack.png", "assets/jettWalking/back/JettBackWalking1.png", "assets/jettWalking/back/JettBackWalking2.png", "assets/jettWalking/back/JettBackWalking3.png"],
+            'left' : ["assets/jettStanding/JettLeft.png", "assets/jettWalking/left/JettLeftWalking1.png", "assets/jettWalking/left/JettLeftWalking2.png", "assets/jettWalking/left/JettLeftWalking3.png"],
+            'right' : ["assets/jettStanding/JettRight.png", "assets/jettWalking/right/JettRightWalking1.png", "assets/jettWalking/right/JettRightWalking2.png", "assets/jettWalking/right/JettRightWalking3.png"],
+            'back right' : ["assets/jettStanding/JettBackRight.png", "assets/jettWalking/back right/JettBackRightWalking1.png", "assets/jettWalking/back right/JettBackRightWalking2.png", "assets/jettWalking/back right/JettBackRightWalking3.png"],
+            'back left' : ["assets/jettStanding/JettBackLeft.png", "assets/jettWalking//back left/JettBackLeftWalking1.png", "assets/jettWalking//back left/JettBackLeftWalking2.png", "assets/jettWalking//back left/JettBackLeftWalking3.png"]
         }
+        
+        self.images = {key: [pygame.image.load(path) for path in paths] for key, paths in self.image_paths.items()}
+        
         self.direction = 'front'
+        self.is_walking = False
+        
+        self.current_frame = 0
+        self.animation_speed = 0.25
+        self.last_update_time = pygame.time.get_ticks()
         
     def drawCharacter(self, screen):
-        scaled_image = pygame.transform.scale(self.images[self.direction], (self.width * 3, self.height * 3))
-        screen.blit(scaled_image, (self.x, self.y))
+        current_time = pygame.time.get_ticks()
+        
+        if current_time - self.last_update_time > self.animation_speed * 1000:
+            self.current_frame = (self.current_frame + 1) % len(self.images[self.direction])
+            self.last_update_time = current_time
+
+        current_image_list = self.images.get(self.direction)
+        
+        if current_image_list:
+            current_image = current_image_list[self.current_frame]
+            scaled_image = pygame.transform.scale(current_image, (self.width * 3, self.height * 3))
+            screen.blit(scaled_image, (self.x, self.y))
         
     def takeDamages(self, dmg):
         self.health -= dmg
@@ -29,23 +47,31 @@ class Jett:
         
     def move(self):
         keys = pygame.key.get_pressed()
+        
+        self.is_walking = False
+        
         if keys[pygame.K_a]:
             self.x -= self.speed
             self.direction = 'left'
+            self.is_walking = True
         if keys[pygame.K_d]:
             self.x += self.speed
             self.direction = 'right'
+            self.is_walking = True
         if keys[pygame.K_w]:
             self.y -= self.speed
             self.direction = 'back'
+            self.is_walking = True
         if keys[pygame.K_s]:
             self.y += self.speed
             self.direction = 'front'
+            self.is_walking = True
         if keys[pygame.K_w] and keys[pygame.K_d]:
             self.direction = 'back right'
-        elif keys[pygame.K_w] and keys[pygame.K_a]:
+            self.is_walking = True
+        if keys[pygame.K_w] and keys[pygame.K_a]:
             self.direction = 'back left'
-        # move based on the keys
+            self.is_walking = True
     
     def look(self):
         pass
