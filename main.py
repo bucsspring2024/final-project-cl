@@ -1,32 +1,58 @@
 import pygame
-# import your controller
-
-class Entity:
-    pass
-    # add Jett
-    # Enemy
-    # Cypher
-
+    
 class Jett:
     def __init__(self, speed, gun):
         self.speed = speed
         self.health = 100
         self.gun = gun
+        self.width = 16
+        self.height = 24
+        self.x = 400
+        self.y = 500
+        self.images = {
+            'front' : pygame.image.load("assets/JettFront.png"),
+            'back' : pygame.image.load("assets/JettBack.png"),
+            'left' : pygame.image.load("assets/JettLeft.png"),
+            'right' : pygame.image.load("assets/JettRight.png"),
+            'back right' : pygame.image.load("assets/JettBackRight.png"),
+            'back left' : pygame.image.load("assets/JettBackLeft.png")
+        }
+        self.direction = 'front'
         
-    def TakeDamages(self, dmg):
+    def drawCharacter(self, screen):
+        scaled_image = pygame.transform.scale(self.images[self.direction], (self.width * 3, self.height * 3))
+        screen.blit(scaled_image, (self.x, self.y))
+        
+    def takeDamages(self, dmg):
         self.health -= dmg
         # take dmg from gun
         
-    def Move(self):
-        pass
+    def move(self):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_a]:
+            self.x -= self.speed
+            self.direction = 'left'
+        if keys[pygame.K_d]:
+            self.x += self.speed
+            self.direction = 'right'
+        if keys[pygame.K_w]:
+            self.y -= self.speed
+            self.direction = 'back'
+        if keys[pygame.K_s]:
+            self.y += self.speed
+            self.direction = 'front'
+        if keys[pygame.K_w] and keys[pygame.K_d]:
+            self.direction = 'back right'
+        elif keys[pygame.K_w] and keys[pygame.K_a]:
+            self.direction = 'back left'
         # move based on the keys
     
-    def Look(self):
+    def look(self):
         pass
         # make your character follow where your cursor is
         # vector math
         
-    def Shoot(self):
+    def shoot(self):
         print(self.gun.damage)
         pass
         # shoot when you click
@@ -35,19 +61,19 @@ class Jett:
         # sparks when you shoot
         # draw the flash separately from the character and add a timer for it
         
-    def Dash(self):
+    def dash(self):
         pass
         # dash Forward Timer (shoot the player at the direction that im looking at)
         
-    def Smoke(self):
+    def smoke(self):
         pass
         # throw smoke Only can use 3 times (vector based on where you look)
         
-    def Updraft(self):
+    def updraft(self):
         pass
         # updraft Only can use 1 time (decrease opacity and make invincible)
         
-    def Reload(self):
+    def reload(self):
         pass
         # reload
         
@@ -57,17 +83,17 @@ class Enemy(Jett):
         self.speed = Speed
         self.health = 100
         
-    def Move(self):
+    def move(self):
         pass
         # move towards player when in view
         # randomly path find
         # stops to shoot (1-3 bullets)
     
-    def Look(self):
+    def look(self):
         pass
         # look at player when in view
         
-    def Shoot(self):
+    def shoot(self):
         pass
         # sparks when shoot
         # shoot in increments (1-3 bullets)
@@ -78,7 +104,7 @@ class Obstacle:
         self.width = width
         self.height = height
         
-    def BlockPlayer(self):
+    def blockPlayer(self):
         pass
         # block the player
         
@@ -88,38 +114,36 @@ class Cypher:
         self.gun = gun
         self.health = 125
     
-    def TakeDamage(self):
+    def takeDamage(self):
         pass
         # takes 26 damage from Classic
         
-    def Move(self):
+    def move(self):
         pass
         # shoots 5-8 shots quickly and then runs
         # Places trip wires
         # Place camera
         # Put down cage
         
-    def Look(self):
+    def look(self):
         pass
         # looks at player
         
-    def Shoot(self):
+    def shoot(self):
         pass
         # when seeing player shoots a random number (1-12) before running out of sight
         
-    def Trips(self):
+    def trips(self):
         pass
         # places trip
         
-    def Camera(self):
+    def camera(self):
         pass
         # Not very plausible
         
-    def Cage(self):
+    def cage(self):
         pass
         # Act like a Smoke
-        
-class Gun(Classic):
 
 class Classic:
     reload = 0 # change
@@ -127,7 +151,7 @@ class Classic:
     ammo = 12
     shooting_speed = 0 # change
     
-    def Bullet(self):
+    def bullet(self):
         pass
         
 class Ghost:
@@ -136,10 +160,6 @@ class Ghost:
 
 def main():
     pygame.init()
-    background = ("white")
-    screen = pygame.display.set_mode((300,300))
-    screen.fill(background)
-    pygame.display.flip()
     running = True
     while running:
         for event in pygame.event.get():
