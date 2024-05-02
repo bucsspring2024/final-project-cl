@@ -34,8 +34,8 @@ I want to make a Enter the Gungeon style game where the character you pick are f
 1. Agent Selection - where you pick the agent (Jett)
 2. Moveable Character - The agent(Jett) can be controlled to move left right and at an angle
 3. Shoot - You would be able to shoot a gun at the direction you click
-4. Scolling Background - you are able to move between screens
-5. Game Over Screen - when you die, the game ends with a screen
+4. Changing Backgrounds - you are able to move between screens
+5. Game Completed Screen - when you complete the level, the game ends with a screen
 
 ### Classes
 

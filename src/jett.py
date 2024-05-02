@@ -7,10 +7,13 @@ class Jett:
         self.speed = speed
         self.health = 100
         self.gun = Classic()
+        self.gun_offset = (20, 0)
+        self.gun_angle = 270
         self.width = 16
         self.height = 24
-        self.x = 400
-        self.y = 500
+        self.x = 25
+        self.y = 250
+        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
         self.image_paths = {
             'front': ["assets/jettStanding/JettFront.png", "assets/jettWalking/front/JettFrontWalking1.png", "assets/jettWalking/front/JettFrontWalking2.png", "assets/jettWalking/front/JettFrontWalking3.png"],
             'back': ["assets/jettStanding/JettBack.png", "assets/jettWalking/back/JettBackWalking1.png", "assets/jettWalking/back/JettBackWalking2.png", "assets/jettWalking/back/JettBackWalking3.png"],
@@ -75,6 +78,17 @@ class Jett:
             'front left': ["assets/jettStandingGun/JettFrontGun.png", "assets/jettWalkingGun/front/JettFrontWalkingGun1.png", "assets/jettWalkingGun/front/JettFrontWalkingGun2.png", "assets/jettWalkingGun/front/JettFrontWalkingGun3.png"]
         }
         
+        self.gun_offset = {
+            'front': (45, 60),
+            'back': (40, 40),
+            'left': (0, 55),
+            'right': (45,55),
+            'back right': (15, 50),
+            'back left': (40, 50),
+            'front right': (20, 0),
+            'front left': (20,0)
+        }
+        
         self.smoke_image = pygame.image.load("assets/jettSmoke/SmokeBall.png")
         self.smoke_speed = 10
         self.smoke_particles = []
@@ -86,7 +100,7 @@ class Jett:
         
         self.updraft_timer = None
         
-    def drawCharacter(self, screen):
+    def drawCharacter(self, screen, draw_gun = False):
         current_time = pygame.time.get_ticks()
         keys = pygame.key.get_pressed()
         
@@ -112,12 +126,20 @@ class Jett:
                 smoke_image = self.throw_smoke_images[self.direction]
                 scaled_smoke_image = pygame.transform.scale(smoke_image, (self.width * 3, self.height * 3))
                 screen.blit(scaled_smoke_image, (self.x, self.y))
+    
         else:
             current_image_list = self.images.get(self.direction)
             if current_image_list:
                 current_image = current_image_list[0]
                 scaled_image = pygame.transform.scale(current_image, (self.width * 3, self.height * 3))
                 screen.blit(scaled_image, (self.x, self.y))
+        
+        if draw_gun and not self.is_dashing and not self.updraft_timer and not (current_time - self.last_smoke_trigger_time < 500):
+            gun_image = pygame.transform.rotate(self.gun.image[self.direction], -self.gun_angle)
+            if self.direction in ['left', 'back left', 'front left']:
+                gun_image = pygame.transform.rotate(pygame.transform.flip(pygame.image.load("assets/gun/classic/classicLeft.png"), True, True), -self.gun_angle)
+            gun_rect = gun_image.get_rect(center = (self.x + self.gun_offset.get(self.direction, (0,0))[0], self.y + self.gun_offset.get(self.direction, (0,0))[1]))
+            screen.blit(gun_image, gun_rect)
         
     def takeDamages(self, dmg):
         self.health -= dmg
@@ -151,10 +173,13 @@ class Jett:
                 self.direction = 'front left'
             if keys[pygame.K_s] and keys[pygame.K_d]:
                 self.direction = 'front right'
+                
+        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
     
     def look(self, mouse_position):
-        dx = mouse_position[0] - self.x
-        dy = mouse_position[1] - self.y
+        dx = mouse_position[0] - (self.x + self.gun_offset.get(self.direction, (0, 0))[0])
+        dy = mouse_position[1] - (self.y + self.gun_offset.get(self.direction, (0, 0))[1])
+        self.gun_angle = math.degrees(math.atan2(dy,dx))
         angle = math.atan2(dy, dx)
         angle_degrees = math.degrees(angle)
         
@@ -172,7 +197,7 @@ class Jett:
             self.direction = 'back right'
     
     def shoot(self, mouse_position):
-        start_pos = (self.x, self.y)
+        start_pos = (self.x + self.gun_offset.get(self.direction, (0, 0))[0], self.y + self.gun_offset.get(self.direction, (0, 0))[1])
         target_pos = mouse_position
         bullet = self.gun.shoot_bullet(start_pos, target_pos)
         return bullet
@@ -216,6 +241,7 @@ class Jett:
         self.look(target_pos)
 
     def update(self, screen):
+        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
         current_time = pygame.time.get_ticks()
         if current_time - self.last_update_time > self.animation_speed * 1000:
             self.last_update_time = current_time
@@ -258,6 +284,7 @@ class Jett:
             elif elapsed_time < 2000:
                 self.y += 1
             else:
+                self.speed = 5
                 self.is_dashing = False
                 self.updraft_timer = None
         for smoke_particle in self.smoke_particles:
@@ -291,3 +318,12 @@ class Jett:
                                                     (int(self.smoke_image.get_width() * smoke_particle["scale_factor"]),
                                                      int(self.smoke_image.get_height() * smoke_particle["scale_factor"])))
             screen.blit(scaled_smoke_image, smoke_particle["position"])
+            
+    def update_animation(self):
+        current_time = pygame.time.get_ticks()
+        if current_time - self.last_update_time > self.animation_speed * 1000:
+            self.last_update_time = current_time
+            self.current_frame = (self.current_frame + 1) % len(self.images[self.direction])
+    
+    def reset_smoke_particles(self):
+        self.smoke_particles = []
