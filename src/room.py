@@ -70,10 +70,6 @@ class gameController:
             
         current_room.dummies = list(zip(dummy_images, dummy_positions))
 
-    def handle_input(self):
-        # Handle player input to move Jett or interact with objects in the room
-        pass
-
     def update(self, jett):
         current_room = self.get_current_room()
         

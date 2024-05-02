@@ -27,9 +27,6 @@ class Classic:
             self.last_shot_time = current_time
             return bullet
         return None
-
-    def update_animation(self):
-        pass
     
 class Bullet:
     def __init__(self, start_pos, target_pos, damage):

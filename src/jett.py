@@ -5,7 +5,6 @@ from src.gun import Classic
 class Jett:
     def __init__(self, speed):
         self.speed = speed
-        self.health = 100
         self.gun = Classic()
         self.gun_offset = (20, 0)
         self.gun_angle = 270
@@ -140,9 +139,6 @@ class Jett:
                 gun_image = pygame.transform.rotate(pygame.transform.flip(pygame.image.load("assets/gun/classic/classicLeft.png"), True, True), -self.gun_angle)
             gun_rect = gun_image.get_rect(center = (self.x + self.gun_offset.get(self.direction, (0,0))[0], self.y + self.gun_offset.get(self.direction, (0,0))[1]))
             screen.blit(gun_image, gun_rect)
-        
-    def takeDamages(self, dmg):
-        self.health -= dmg
         
     def move(self):
         keys = pygame.key.get_pressed()

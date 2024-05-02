@@ -2,8 +2,8 @@
 
 :warning: Everything between << >> needs to be replaced (remove << >> after replacing)
 
-# << Project Title >>
-## CS110 Final Project  << Spring, 2024 >>
+# Enter Valorant
+## CS110 Final Project Spring, 2024
 
 ## Team Members
 
@@ -13,7 +13,7 @@ none
 
 ## Project Description
 
-I want to make a Enter the Gungeon style game where the character you pick are from Valorant. Depending on which character you pick you get different ability from the original game.
+I want to make a Enter the Gungeon style game where the character you pick are from Valorant. You will play as Jett and be able to use her basic abilities as well has have the art style of Enter the Gungeon.
 
 ***    
 
@@ -39,7 +39,12 @@ I want to make a Enter the Gungeon style game where the character you pick are f
 
 ### Classes
 
-- << You should have a list of each of your classes with a description >>
+- Class Controller: controls what game state the game is in from Menu, Agent Selection, Game, and Gameover mode. In each of the game states you can do certain things and can go between the states.
+- Class Jett: initializes Jett's attributes like her speed, animation, gun, size and abilities. Additionally, it is also where her movement controls, shooting mechanics, abilities and animations are.
+- Class Classic: initializes the gun Classic's attributes like its shooting speed and sprites.
+- Class Bullet: initializes the bullet's attributes of the Classic gun like the speed and size. It also controlls the direction that the bulllets shoots and where it comes out of from the gun sprite.
+- Class Room: initializes the background, boundaries, obstacles and componenets of the rooms.
+- Class gameController: initializes the room backrounds themselves as well as control room changes. Also create the components of the rooms like the signs, dummies and how Jett interact with the rooms.
 
 ## ATP
 
